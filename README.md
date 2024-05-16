@@ -1,10 +1,4 @@
-<pre>
-  <dependency>
-      <groupId>io.github.codert96</groupId>
-      <artifactId>mybatis-datascope-spring-boot-starter</artifactId>
-      <version>1.0.0</version>
-  </dependency>  
-</pre>
+# mybatis-datascope-spring-boot-starter
 
 
 <pre>
