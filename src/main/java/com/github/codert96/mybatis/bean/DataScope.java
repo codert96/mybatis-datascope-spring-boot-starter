@@ -1,10 +1,7 @@
 package com.github.codert96.mybatis.bean;
 
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
@@ -23,8 +20,7 @@ public class DataScope {
 
     private String columnName;
 
-    @Setter(AccessLevel.PUBLIC)
-    private boolean or = false;
+    private List<Condition> conditions = new ArrayList<>();
 
     /**
      * 如果 scopes 是空的 则查询条件加 1!=1 默认：true
@@ -52,5 +48,23 @@ public class DataScope {
             return false;
         }
         return scopes.size() >= usingTemporaryTableLimit;
+    }
+
+    public DataScope or(DataScope or) {
+        this.conditions.add(new Condition(true, or));
+        return this;
+    }
+
+    public DataScope and(DataScope and) {
+        this.conditions.add(new Condition(false, and));
+        return this;
+    }
+
+
+    @Data
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Condition {
+        private final boolean or;
+        private final DataScope dataScope;
     }
 }

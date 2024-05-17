@@ -95,9 +95,13 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                 if (Objects.nonNull(table)) {
                     Expression extraWhere = null;
                     for (DataScope dataScope : dataScopes) {
-                        Expression expression = process(table, dataScope);
+                        Expression expression = apply(table, dataScope);
+                        boolean b = dataScopes.size() > 1;
+
                         extraWhere = (Objects.isNull(extraWhere)) ? expression :
-                                (dataScope.or() ? new OrExpression(new Parenthesis(extraWhere), expression) : new AndExpression(extraWhere, expression));
+                                new AndExpression(extraWhere,
+                                        b ? new Parenthesis(expression) : expression
+                                );
                     }
                     Expression expression = expression(where, extraWhere);
                     Method method = ReflectionUtils.findMethod(statement.getClass(), "setWhere", Expression.class);
@@ -129,18 +133,33 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
         }
     }
 
-    private Expression alwaysFalse() {
-        return new NotEqualsTo(new LongValue(1), new LongValue(1));
+    private Expression apply(Table table, DataScope dataScope) {
+        Expression expression = expression(table, dataScope);
+        List<DataScope.Condition> conditions = dataScope.conditions();
+        if (!CollectionUtils.isEmpty(conditions)) {
+            for (DataScope.Condition condition : conditions) {
+                DataScope scope = condition.dataScope();
+                Expression apply = apply(table, scope);
+                expression = condition.or() ?
+                        new Parenthesis(
+                                new OrExpression(
+                                        expression instanceof AndExpression ?
+                                                new Parenthesis(expression) : expression,
+                                        apply
+                                )
+                        )
+                        :
+                        new AndExpression(expression, apply);
+            }
+        }
+        return expression;
     }
 
-    private Expression alwaysTrue() {
-        return new EqualsTo(new LongValue(1), new LongValue(1));
-    }
 
-    private Expression process(Table table, DataScope dataScope) {
+    private Expression expression(Table table, DataScope dataScope) {
         List<String> scopes = dataScope.scopes();
         if (CollectionUtils.isEmpty(scopes)) {
-            return dataScope.emptyScopesReturnEmptyValue() ? alwaysFalse() : alwaysTrue();
+            return dataScope.emptyScopesReturnEmptyValue() ? new NotEqualsTo(new LongValue(1), new LongValue(1)) : new EqualsTo(new LongValue(1), new LongValue(1));
         }
 
         List<Expression> expressions = scopes.stream().<Expression>map(StringValue::new).collect(Collectors.toList());
