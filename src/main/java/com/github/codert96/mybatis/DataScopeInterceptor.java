@@ -143,9 +143,8 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                 expression = condition.or() ?
                         new Parenthesis(
                                 new OrExpression(
-                                        expression instanceof AndExpression ?
-                                                new Parenthesis(expression) : expression,
-                                        apply
+                                        expression instanceof AndExpression ? new Parenthesis(expression) : expression,
+                                        apply instanceof AndExpression ? new Parenthesis(apply) : apply
                                 )
                         )
                         :
