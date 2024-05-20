@@ -38,6 +38,14 @@ public class DataScope {
         return of(true, columnName, supplier);
     }
 
+    public static DataScope of(String columnName, String singleScope) {
+        return of(columnName, () -> Collections.singletonList(singleScope));
+    }
+
+    public static DataScope of(String columnName, List<String> scopes) {
+        return of(columnName, () -> scopes);
+    }
+
     public static DataScope of(boolean emptyScopesReturnEmptyValue, String columnName, Supplier<List<String>> supplier) {
         DataScope dataScope = new DataScope()
                 .uuid(UUID.randomUUID().toString().replace("-", ""))
