@@ -6,7 +6,7 @@
 
     <groupId>io.github.codert96</groupId>
     <artifactId>mybatis-datascope-spring-boot-starter</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 
     <url>https://github.com/codert96/mybatis-datascope-spring-boot-starter</url>
 
@@ -17,7 +17,7 @@
         List findAll(DataScope... dataScope);
         // You service
         userMapper.findAll(DataScope.of("id", () -> Arrays.asList("1", "2")));
-        // sql is select id, name from sys_user where sys_user.in in("1","2")
+        // sql is select id, name from sys_user where sys_user.id in("1","2")
     </description>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

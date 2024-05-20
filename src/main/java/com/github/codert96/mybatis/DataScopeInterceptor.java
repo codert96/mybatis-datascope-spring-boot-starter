@@ -93,15 +93,12 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                 }
                 Table table = reference.get();
                 if (Objects.nonNull(table)) {
-                    Expression extraWhere = null;
-                    for (DataScope dataScope : dataScopes) {
-                        Expression expression = apply(table, dataScope);
-                        boolean b = dataScopes.size() > 1;
-
-                        extraWhere = (Objects.isNull(extraWhere)) ? expression :
-                                new AndExpression(extraWhere,
-                                        b ? new Parenthesis(expression) : expression
-                                );
+                    Expression extraWhere = apply(table, dataScopes.get(0));
+                    if (dataScopes.size() > 1) {
+                        extraWhere = dataScopes.stream()
+                                .skip(1)
+                                .map(dataScope -> apply(table, dataScope))
+                                .reduce(extraWhere, (acc, expression) -> new AndExpression(acc, new Parenthesis(expression)));
                     }
                     Expression expression = expression(where, extraWhere);
                     Method method = ReflectionUtils.findMethod(statement.getClass(), "setWhere", Expression.class);
