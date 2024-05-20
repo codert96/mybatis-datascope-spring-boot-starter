@@ -191,6 +191,26 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                 return expressions.stream()
                         .<Expression>map(expression -> new MinorThanEquals().withLeftExpression(tableName).withRightExpression(expression))
                         .reduce(null, binaryOperator);
+            case EXISTS:
+                return scopes.stream()
+                        .map(scope -> {
+                            try {
+                                return CCJSqlParserUtil.parseCondExpression(String.format("EXISTS(%s)", scope));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .reduce(null, binaryOperator);
+            case NOT_EXISTS:
+                return scopes.stream()
+                        .map(scope -> {
+                            try {
+                                return CCJSqlParserUtil.parseCondExpression(String.format("NOT EXISTS(%s)", scope));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .reduce(null, binaryOperator);
             default:
                 boolean equals = DataScope.Operator.NOT_EQUALS_TO.equals(dataScope.operator());
                 if (expressions.size() == 1) {
@@ -228,12 +248,12 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                 scopes.stream()
                         .distinct()
                         .map(s -> {
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("uuid", dataScope.uuid());
-                            hashMap.put("scope", s);
-                            return new MapSqlParameterSource(hashMap);
-                        }
-                ).toArray(MapSqlParameterSource[]::new)
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("uuid", dataScope.uuid());
+                                    hashMap.put("scope", s);
+                                    return new MapSqlParameterSource(hashMap);
+                                }
+                        ).toArray(MapSqlParameterSource[]::new)
         );
     }
 

@@ -72,7 +72,10 @@ public class DataScope {
         GREATER_THAN,
         GREATER_THAN_EQUALS,
         MINOR_THAN,
-        MINOR_THAN_EQUALS
+        MINOR_THAN_EQUALS,
+        EXISTS,
+        NOT_EXISTS,
+        REGEX
     }
 
     @Data
