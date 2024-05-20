@@ -166,7 +166,8 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
         }
         List<Expression> expressions = scopes.stream().<Expression>map(StringValue::new).collect(Collectors.toList());
         BinaryOperator<Expression> binaryOperator = (a, b) -> Objects.isNull(a) ? b : dataScope.any() ? new OrExpression(a, b) : new AndExpression(a, b);
-        switch (dataScope.operator()) {
+        DataScope.Operator operator = dataScope.operator();
+        switch (operator) {
             case LIKE:
                 return expressions.stream()
                         .<Expression>map(expression -> new LikeExpression().withLeftExpression(tableName).withRightExpression(expression))
@@ -212,7 +213,7 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                         })
                         .reduce(null, binaryOperator);
             default:
-                boolean equals = DataScope.Operator.NOT_EQUALS_TO.equals(dataScope.operator());
+                boolean equals = DataScope.Operator.NOT_EQUALS_TO.equals(operator);
                 if (expressions.size() == 1) {
                     Expression expression = expressions.get(0);
                     return equals ? new NotEqualsTo(tableName, expression) : new EqualsTo(tableName, expression);
