@@ -30,6 +30,10 @@ public class DataScope {
     @Setter(AccessLevel.PUBLIC)
     private int usingTemporaryTableLimit = 100;
 
+    @Setter(AccessLevel.PUBLIC)
+    private Operator operator = Operator.EQUALS_TO;
+    private boolean any = true;
+
     public static DataScope of(String columnName, Supplier<List<String>> supplier) {
         return of(true, columnName, supplier);
     }
@@ -60,6 +64,16 @@ public class DataScope {
         return this;
     }
 
+    public enum Operator {
+        EQUALS_TO,
+        NOT_EQUALS_TO,
+        LIKE,
+        NOT_LIKE,
+        GREATER_THAN,
+        GREATER_THAN_EQUALS,
+        MINOR_THAN,
+        MINOR_THAN_EQUALS
+    }
 
     @Data
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
