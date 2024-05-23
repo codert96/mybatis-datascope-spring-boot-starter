@@ -1,6 +1,5 @@
 # mybatis-datascope-spring-boot-starter
 
-
 <pre>
     // You Mapper. 
     @Select("select id, name from sys_user")

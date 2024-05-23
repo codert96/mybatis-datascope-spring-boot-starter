@@ -1,19 +1,20 @@
 package com.github.codert96.mybatis.config;
 
 import com.github.codert96.mybatis.DataScopeInterceptor;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.apache.ibatis.plugin.Interceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import javax.sql.DataSource;
+
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(MybatisAutoConfiguration.class)
+@ConditionalOnClass(Interceptor.class)
 public class MybatisConfig {
 
     @Bean
-    public DataScopeInterceptor dataScopeInterceptor(JdbcOperations jdbcOperations) {
-        return new DataScopeInterceptor(new NamedParameterJdbcTemplate(jdbcOperations));
+    public DataScopeInterceptor dataScopeInterceptor(DataSource dataSource) {
+        return new DataScopeInterceptor(new NamedParameterJdbcTemplate(dataSource));
     }
 }
