@@ -1,5 +1,5 @@
-# <a href='https://central.sonatype.com/artifact/io.github.codert96/mybatis-datascope-spring-boot-starter'>mybatis-datascope-spring-boot-starter</a>
-### mybatis插件，datascope，数据权限
+# <a href='https://central.sonatype.com/artifact/io.github.codert96/mybatis-datascope-spring-boot-starter'>mybatis数据权限插件-mybatis-datascope-spring-boot-starter</a>
+
 <pre>
     // You Mapper. 
     @Select("select id, name from sys_user")
