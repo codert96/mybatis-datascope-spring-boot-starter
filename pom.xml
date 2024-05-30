@@ -6,7 +6,7 @@
 
     <groupId>io.github.codert96</groupId>
     <artifactId>mybatis-datascope-spring-boot-starter</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <url>https://github.com/codert96/mybatis-datascope-spring-boot-starter</url>
 

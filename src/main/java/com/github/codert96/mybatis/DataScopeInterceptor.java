@@ -195,7 +195,6 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                                         .setLikeKeyWord(LikeExpression.KeyWord.REGEXP)
                                         .withLeftExpression(tableName)
                                         .withRightExpression(expression)
-                                        .withEscape(escape(dataScope))
                         )
                         .reduce(null, binaryOperator);
             case NOT_REGEX:
@@ -205,8 +204,19 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
                                         .setLikeKeyWord(LikeExpression.KeyWord.REGEXP)
                                         .withLeftExpression(tableName)
                                         .withRightExpression(expression)
-                                        .withEscape(escape(dataScope))
                                         .withNot(true)
+                        )
+                        .reduce(null, binaryOperator);
+            case MATCH_CASESENSITIVE:
+            case MATCH_CASEINSENSITIVE:
+            case NOT_MATCH_CASESENSITIVE:
+            case NOT_MATCH_CASEINSENSITIVE:
+                RegExpMatchOperatorType regExpMatchOperatorType = RegExpMatchOperatorType.valueOf(operator.name());
+                return expressions.stream()
+                        .<Expression>map(
+                                expression -> new RegExpMatchOperator(regExpMatchOperatorType)
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
                         )
                         .reduce(null, binaryOperator);
             case GREATER_THAN:

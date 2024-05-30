@@ -87,7 +87,12 @@ public class DataScope {
         EXISTS,
         NOT_EXISTS,
         REGEX,
-        NOT_REGEX
+        NOT_REGEX,
+
+        MATCH_CASESENSITIVE,
+        MATCH_CASEINSENSITIVE,
+        NOT_MATCH_CASESENSITIVE,
+        NOT_MATCH_CASEINSENSITIVE
     }
 
     @Data
