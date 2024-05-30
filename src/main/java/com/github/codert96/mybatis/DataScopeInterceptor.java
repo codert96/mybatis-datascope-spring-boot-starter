@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -170,27 +171,75 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
         switch (operator) {
             case LIKE:
                 return expressions.stream()
-                        .<Expression>map(expression -> new LikeExpression().withLeftExpression(tableName).withRightExpression(expression))
+                        .<Expression>map(
+                                expression -> new LikeExpression()
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                                        .withEscape(escape(dataScope))
+                        )
                         .reduce(null, binaryOperator);
             case NOT_LIKE:
                 return expressions.stream()
-                        .<Expression>map(expression -> new LikeExpression().withLeftExpression(tableName).withRightExpression(expression).withNot(true))
+                        .<Expression>map(
+                                expression -> new LikeExpression()
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                                        .withEscape(escape(dataScope))
+                                        .withNot(true)
+                        )
+                        .reduce(null, binaryOperator);
+            case REGEX:
+                return expressions.stream()
+                        .<Expression>map(
+                                expression -> new LikeExpression()
+                                        .setLikeKeyWord(LikeExpression.KeyWord.REGEXP)
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                                        .withEscape(escape(dataScope))
+                        )
+                        .reduce(null, binaryOperator);
+            case NOT_REGEX:
+                return expressions.stream()
+                        .<Expression>map(
+                                expression -> new LikeExpression()
+                                        .setLikeKeyWord(LikeExpression.KeyWord.REGEXP)
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                                        .withEscape(escape(dataScope))
+                                        .withNot(true)
+                        )
                         .reduce(null, binaryOperator);
             case GREATER_THAN:
                 return expressions.stream()
-                        .<Expression>map(expression -> new GreaterThan().withLeftExpression(tableName).withRightExpression(expression))
+                        .<Expression>map(
+                                expression -> new GreaterThan()
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                        )
                         .reduce(null, binaryOperator);
             case GREATER_THAN_EQUALS:
                 return expressions.stream()
-                        .<Expression>map(expression -> new GreaterThanEquals().withLeftExpression(tableName).withRightExpression(expression))
+                        .<Expression>map(
+                                expression -> new GreaterThanEquals()
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                        )
                         .reduce(null, binaryOperator);
             case MINOR_THAN:
                 return expressions.stream()
-                        .<Expression>map(expression -> new MinorThan().withLeftExpression(tableName).withRightExpression(expression))
+                        .<Expression>map(
+                                expression -> new MinorThan()
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                        )
                         .reduce(null, binaryOperator);
             case MINOR_THAN_EQUALS:
                 return expressions.stream()
-                        .<Expression>map(expression -> new MinorThanEquals().withLeftExpression(tableName).withRightExpression(expression))
+                        .<Expression>map(
+                                expression -> new MinorThanEquals()
+                                        .withLeftExpression(tableName)
+                                        .withRightExpression(expression)
+                        )
                         .reduce(null, binaryOperator);
             case EXISTS:
                 return scopes.stream()
@@ -314,6 +363,14 @@ public class DataScopeInterceptor implements Interceptor, InitializingBean {
             return dataScopes.stream().filter(tmp -> tmp instanceof DataScope).map(DataScope.class::cast).distinct().collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+
+    private Expression escape(DataScope dataScope) {
+        String escape = dataScope.escape();
+        if (StringUtils.hasText(escape)) {
+            return new StringValue(escape);
+        }
+        return null;
     }
 
     @Override

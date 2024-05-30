@@ -34,6 +34,9 @@ public class DataScope {
     private Operator operator = Operator.EQUALS_TO;
     private boolean any = true;
 
+    @Setter(AccessLevel.PUBLIC)
+    private String escape;
+
     public static DataScope of(String columnName, Supplier<List<String>> supplier) {
         return of(true, columnName, supplier);
     }
@@ -83,7 +86,8 @@ public class DataScope {
         MINOR_THAN_EQUALS,
         EXISTS,
         NOT_EXISTS,
-        REGEX
+        REGEX,
+        NOT_REGEX
     }
 
     @Data
