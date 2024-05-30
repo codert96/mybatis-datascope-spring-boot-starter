@@ -1,4 +1,4 @@
-# <a href='https://central.sonatype.com/artifact/io.github.codert96/mybatis-datascope-spring-boot-starter'>mybatis数据权限插件-mybatis-datascope-spring-boot-starter</a>
+# <a href='https://central.sonatype.com/artifact/io.github.codert96/mybatis-datascope-spring-boot-starter'>mybatis 数据权限插件 mybatis-datascope-spring-boot-starter</a>
 
 <pre>
     // You Mapper. 
